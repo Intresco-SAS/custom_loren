@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <templates id="pos_kot_print_template_loren" inherit_id="point_of_sale.template" xml:space="preserve">
+    	  	<!-- PrintKotButtonWidget -->
+    <t t-name="PrintKotButtonWidget" name="kot print Button Widget">
+    	<t t-if="widget.pos.config.kot_print">
+	        <div class="control-button">
+	            <i class="fa fa-print"></i>Cotizaciones 
+	        </div>
+    	</t>
+    </t>
+
+
+        <!-- After Created orderlines Print Buttton -->
+	<t t-name="PrintKotButtonScreen">
+	  	<div class='receipt-screen screen'>
+		  	<div class='screen-content'>
+				<div class='top-content'>
+					<span class='button back' style="background-color:#6EC89B; color:white">
+						<i class='fa fa-angle-double-left' style="margin-left:5px;"></i>
+						Regresar
+					</span>
+					<span class='button next' style="background-color:#6EC89B; color:white">
+						Ok
+						<i class='fa fa-angle-double-right' style="margin-left:5px;"></i>
+					</span>
+				</div>
+				<div class="centered-content touch-scrollable">
+					<div class="button print-coupon">
+						  <i class='fa fa-print'></i> Imprimir
+					</div>
+					<div class="pos-payment-receipt-container" style="text-align: center;">
+					  </div>
+				</div>
+			</div>
+	  </div>
+	</t>
+
+
+	<t t-name="KotTicket">
+		<t t-jquery=".pos-sale-ticket" t-operation="replace">
+	        <div class="pos-sale-ticket" style="font-size:14px">
+
+	        	<div style="font-size:17px" align="center">
+	        		FERRETERIA
+	        	</div>
+
+		            <div style="margin-top: 20px" class="pos-center-align"><span>Pedido de Venta</span><br/>
+		            <!--t t-esc="order.formatted_validation_date"/--> <t t-esc="order.name"/></div>
+		           
+		            
+		            <div style="margin-top: 5px" class="pos-center-align"> 
+					<t t-esc="moment().format('L LT')"/>
+		            </div><br />
+		            
+
+		            <t t-if="widget.pos.config.is_table_management">
+		            <div class="receipt-phone">
+		                Floor : <t t-esc="order.table.floor_id[1] || ''"/><br />
+		            </div>
+		            
+		            <div class="receipt-user">
+		                Table: <t t-esc="order.table.name"/><br />
+		            </div>
+		            </t>
+		            <div class="receipt-user; pos-center-align">
+		                Vendedor: <t t-esc="widget.pos.pos_session.user_id[1]"/><br />
+		            </div>
+		            <br />
+		            <t t-if = "count &gt; 0">
+						
+						<!--Subtotal Recibo-->
+		            	 <t t-set="counter" t-value="0"/>
+
+			            <table class='receipt-orderlines'>
+			                <colgroup>
+			                    <col width='30%' />
+                        		<col width='12%' />
+                        		<col width='28%' />
+                        		<col width='30%' />
+			                </colgroup>
+			               	<tr style="border: 1px solid rgb(0, 0, 0);">
+			                	<th>DESCRIP.</th>
+			                	<th>CTA.</th>
+			                	<th style = "text-align : right;">VAL. UNIT</th>
+			                	<th style = "text-align : right;">SUBT.</th>
+			            	</tr>
+			            </table>
+			                
+			            <table>   
+			                <tr t-foreach="orderlines" t-as="orderline">
+			                	<td>
+
+		                	<div class="row" style="margin-bottom:5px">
+		                	<t t-if="orderline.get_product().default_code">
+                                [<t t-esc="orderline.get_product().default_code"/>]
+                            </t>
+                            <t t-esc="orderline.get_product().display_name"/><br/>
+
+                             <!--t t-if="orderline.get_discount() > 0">
+                                <div class="pos-disc-font">
+                                    <t t-esc="orderline.get_discount()"/>% Dto.
+                                </div>
+                            </t-->
+                        
+                        <div class="col-12">
+                            <span style="margin-left:70px">
+                            <t t-esc="orderline.get_quantity_str_with_unit()"/>
+                        </span>
+                        
+                        <span style="margin-left:10px">
+                            <t t-set="a" t-value="orderline.get_unit_display_price()"></t>
+                            <t t-set="b" t-value="1"></t>
+                            <t t-set="c" t-value="a/b"></t>
+                            <t t-esc="widget.format_currency(c,'Product Price')"/>
+                        </span>
+                        
+                        <span style="margin-left:7px" class="pull-right">
+                            <t t-esc="widget.format_currency(orderline.get_display_price()/1,'Product Price')"/>
+                        </span>
+                      </div> 
+                      </div>
+                  </td>
+                  <t t-set="counter" t-value="counter + orderline.get_display_price()"/>
+			                </tr>
+
+			            </table>
+			        </t><br/>
+				<div class="pull-right">
+			         <b><span>TOTAL: </span> <span style="margin-left:5px" t-esc="widget.format_currency(counter,'Product Price')"/></b> 
+			    </div>
+
+			        <t t-if = "count == 0 ">
+			        	<div style = "text-align : center;">No Hay Productos Seleccionados</div>
+			        </t>
+		            <br />
+		              <div align="center" style="font-size:14px;border-top: 1px solid black;margin-top:10px">
+                           ¡GRACIAS POR SU COMPRA!<br />
+                      </div>
+
+	        </div>
+	    </t>
+    </t>
+    </templates>
